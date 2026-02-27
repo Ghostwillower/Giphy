@@ -121,27 +121,93 @@
       margin-left: 1rem;
     }
 
-    /* ── THUMBNAIL STRIP ── */
-    .thumb-strip {
+    /* ── CAROUSEL ── */
+    .carousel-wrapper {
+      position: relative;
+      max-width: 520px;
+      margin: 3.5rem auto 0;
+      perspective: 1200px;
+    }
+    .carousel-track {
+      display: flex;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+    .carousel-slide {
+      min-width: 100%;
+      transition: transform .45s cubic-bezier(.4,0,.2,1);
+    }
+    .carousel-slide img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 16px;
+      border: 2px solid rgba(97,87,255,.4);
+    }
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(18,18,18,.75);
+      color: #fff;
+      border: 2px solid var(--giphy-purple);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      cursor: pointer;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s, transform .15s;
+      backdrop-filter: blur(4px);
+    }
+    .carousel-btn:hover {
+      background: var(--giphy-purple);
+      transform: translateY(-50%) scale(1.1);
+    }
+    .carousel-btn.prev { left: -22px; }
+    .carousel-btn.next { right: -22px; }
+    .carousel-dots {
       display: flex;
       justify-content: center;
-      margin: 3.5rem auto 0;
-      max-width: 900px;
-      gap: 1rem;
-      padding: 0 1rem;
+      gap: .5rem;
+      margin-top: 1rem;
     }
-    .thumb-strip img {
-      width: 200px;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 12px;
-      border: 2px solid rgba(97,87,255,.4);
-      transition: transform .25s, border-color .25s;
+    .carousel-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--giphy-purple);
+      background: transparent;
+      cursor: pointer;
+      transition: background .2s;
+      padding: 0;
     }
-    .thumb-strip img:hover {
-      transform: scale(1.06);
+    .carousel-dot.active {
+      background: var(--giphy-teal);
       border-color: var(--giphy-teal);
     }
+
+    /* ── 3D TILT CARD ── */
+    .tilt-card {
+      transition: transform .15s ease-out, box-shadow .15s ease-out;
+      transform-style: preserve-3d;
+      border-radius: 16px;
+      overflow: hidden;
+      will-change: transform;
+    }
+    .tilt-card .tilt-shine {
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .2s;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.18), transparent 60%);
+    }
+    .tilt-card:hover .tilt-shine { opacity: 1; }
 
     /* ── SECTIONS ── */
     section { padding: 5rem 1.5rem; }
@@ -165,36 +231,40 @@
       margin-bottom: 3rem;
     }
 
-    /* ── GIF GRID ── */
+    /* ── PORTFOLIO CAROUSEL ── */
     #portfolio { background: #161616; }
-    .gif-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1.25rem;
+    .portfolio-carousel {
+      position: relative;
+      max-width: 560px;
+      margin: 0 auto;
+      perspective: 1200px;
     }
-    .gif-card {
-      background: var(--card-bg);
-      border-radius: 14px;
+    .portfolio-track {
+      display: flex;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,.07);
-      transition: transform .25s, box-shadow .25s;
+      border-radius: 16px;
     }
-    .gif-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0,0,0,.5);
+    .portfolio-slide {
+      min-width: 100%;
+      transition: transform .45s cubic-bezier(.4,0,.2,1);
+      position: relative;
     }
-    .gif-card img {
+    .portfolio-slide img {
       width: 100%;
-      height: 220px;
-      object-fit: cover;
+      height: auto;
       display: block;
     }
-    .gif-card-body {
+    .portfolio-slide .gif-card-body {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
       padding: .9rem 1rem;
+      background: linear-gradient(transparent, rgba(0,0,0,.7));
     }
-    .gif-card-body span {
+    .portfolio-slide .gif-card-body span {
       font-size: .8rem;
-      background: rgba(97,87,255,.25);
+      background: rgba(97,87,255,.4);
       color: var(--giphy-teal);
       padding: .2rem .7rem;
       border-radius: 999px;
@@ -211,8 +281,8 @@
     }
     @media (max-width: 640px) {
       .about-grid { grid-template-columns: 1fr; }
-      .thumb-strip { flex-wrap: wrap; }
-      .thumb-strip img { width: 140px; height: 140px; }
+      .carousel-wrapper { max-width: 90vw; }
+      .portfolio-carousel { max-width: 90vw; }
     }
     .about-photo {
       border-radius: 16px;
@@ -295,12 +365,23 @@
     <a class="btn btn-primary" href="#portfolio">View My GIFs</a>
     <a class="btn btn-outline"  href="#about">About Me</a>
 
-    <!-- thumbnail strip -->
-    <div class="thumb-strip">
-      <img src="gif.gif"    alt="Animated clip 1" />
-      <img src="gif(1).gif" alt="Animated clip 2" />
-      <img src="gif(2).gif" alt="Animated clip 3" />
-      <img src="gif(3).gif" alt="Animated clip 4" />
+    <!-- hero carousel -->
+    <div class="carousel-wrapper" id="heroCarousel">
+      <button class="carousel-btn prev" aria-label="Previous">&#8249;</button>
+      <div class="carousel-track tilt-card">
+        <div class="tilt-shine"></div>
+        <div class="carousel-slide"><img src="gif.gif"    alt="Animated clip 1" /></div>
+        <div class="carousel-slide"><img src="gif(1).gif" alt="Animated clip 2" /></div>
+        <div class="carousel-slide"><img src="gif(2).gif" alt="Animated clip 3" /></div>
+        <div class="carousel-slide"><img src="gif(3).gif" alt="Animated clip 4" /></div>
+      </div>
+      <button class="carousel-btn next" aria-label="Next">&#8250;</button>
+      <div class="carousel-dots">
+        <button class="carousel-dot active" aria-label="Go to slide 1"></button>
+        <button class="carousel-dot" aria-label="Go to slide 2"></button>
+        <button class="carousel-dot" aria-label="Go to slide 3"></button>
+        <button class="carousel-dot" aria-label="Go to slide 4"></button>
+      </div>
     </div>
   </section>
 
@@ -312,22 +393,33 @@
       <p class="section-sub">
         Here's what I've made so far. Not a huge collection yet but every one of these is mine.
       </p>
-      <div class="gif-grid">
-        <div class="gif-card">
-          <img src="gif.gif" alt="Reaction clip" />
-          <div class="gif-card-body"><span>#reaction</span></div>
+      <div class="portfolio-carousel" id="portfolioCarousel">
+        <button class="carousel-btn prev" aria-label="Previous">&#8249;</button>
+        <div class="portfolio-track tilt-card">
+          <div class="tilt-shine"></div>
+          <div class="portfolio-slide">
+            <img src="gif.gif" alt="Reaction clip" />
+            <div class="gif-card-body"><span>#reaction</span></div>
+          </div>
+          <div class="portfolio-slide">
+            <img src="gif(1).gif" alt="Vibe clip" />
+            <div class="gif-card-body"><span>#vibe</span></div>
+          </div>
+          <div class="portfolio-slide">
+            <img src="gif(2).gif" alt="Culture clip" />
+            <div class="gif-card-body"><span>#culture</span></div>
+          </div>
+          <div class="portfolio-slide">
+            <img src="gif(3).gif" alt="Expression clip" />
+            <div class="gif-card-body"><span>#expression</span></div>
+          </div>
         </div>
-        <div class="gif-card">
-          <img src="gif(1).gif" alt="Vibe clip" />
-          <div class="gif-card-body"><span>#vibe</span></div>
-        </div>
-        <div class="gif-card">
-          <img src="gif(2).gif" alt="Culture clip" />
-          <div class="gif-card-body"><span>#culture</span></div>
-        </div>
-        <div class="gif-card">
-          <img src="gif(3).gif" alt="Expression clip" />
-          <div class="gif-card-body"><span>#expression</span></div>
+        <button class="carousel-btn next" aria-label="Next">&#8250;</button>
+        <div class="carousel-dots">
+          <button class="carousel-dot active" aria-label="Go to slide 1"></button>
+          <button class="carousel-dot" aria-label="Go to slide 2"></button>
+          <button class="carousel-dot" aria-label="Go to slide 3"></button>
+          <button class="carousel-dot" aria-label="Go to slide 4"></button>
         </div>
       </div>
     </div>
@@ -417,6 +509,58 @@
   <footer>
     <p>© 2026 vayloxity · Built for the <a href="https://giphy.com/channel/vayloxity" target="_blank" rel="noopener">GIPHY</a> Creator Account Application</p>
   </footer>
+
+  <script>
+    /* ── Carousel logic ── */
+    function initCarousel(wrapper) {
+      const track = wrapper.querySelector('.carousel-track, .portfolio-track');
+      const slides = track.querySelectorAll('.carousel-slide, .portfolio-slide');
+      const dots = wrapper.querySelectorAll('.carousel-dot');
+      const prevBtn = wrapper.querySelector('.prev');
+      const nextBtn = wrapper.querySelector('.next');
+      let current = 0;
+      const total = slides.length;
+
+      function goTo(index) {
+        current = ((index % total) + total) % total;
+        slides.forEach(function(s) { s.style.transform = 'translateX(' + (-current * 100) + '%)'; });
+        dots.forEach(function(d, idx) { d.classList.toggle('active', idx === current); });
+      }
+      prevBtn.addEventListener('click', function() { goTo(current - 1); });
+      nextBtn.addEventListener('click', function() { goTo(current + 1); });
+      dots.forEach(function(d, idx) { d.addEventListener('click', function() { goTo(idx); }); });
+      goTo(0);
+    }
+    document.querySelectorAll('#heroCarousel, #portfolioCarousel').forEach(initCarousel);
+
+    /* ── 3D tilt on hover ── */
+    document.querySelectorAll('.tilt-card').forEach(function(card) {
+      var shine = card.querySelector('.tilt-shine');
+      var ticking = false;
+
+      card.addEventListener('mousemove', function(e) {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function() {
+          var rect = card.getBoundingClientRect();
+          var x = (e.clientX - rect.left) / rect.width;
+          var y = (e.clientY - rect.top) / rect.height;
+          var rotY = (x - 0.5) * 20;
+          var rotX = (0.5 - y) * 20;
+          card.style.transform = 'perspective(800px) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) scale(1.02)';
+          card.style.boxShadow = '0 ' + (10 + rotX) + 'px ' + (30 + Math.abs(rotY)) + 'px rgba(0,0,0,.45)';
+          if (shine) {
+            shine.style.background = 'radial-gradient(circle at ' + (x * 100) + '% ' + (y * 100) + '%, rgba(255,255,255,.18), transparent 60%)';
+          }
+          ticking = false;
+        });
+      });
+      card.addEventListener('mouseleave', function() {
+        card.style.transform = '';
+        card.style.boxShadow = '';
+      });
+    });
+  </script>
 
 </body>
 </html>
